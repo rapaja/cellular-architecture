@@ -6,14 +6,22 @@ function AutomatonController(props) {
       <button
         class="btn btn-outline-success my-2 my-sm-0"
         type="submit"
-        onClick={props.advance}
+        onClick={props.advance_action}
       >
         Next
       </button>
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+      <button
+        class="btn btn-outline-success my-2 my-sm-0"
+        type="submit"
+        onClick={props.start_action}
+      >
         Start
       </button>
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+      <button
+        class="btn btn-outline-success my-2 my-sm-0"
+        type="submit"
+        onClick={props.stop_action}
+      >
         Stop
       </button>
     </nav>

@@ -23,15 +23,20 @@ function Automaton(props) {
   const [cells, setCells] = useState(createTable(height, width));
   const [ticks, setTicks] = useState(0);
   const [running, setRunning] = useState(false);
+  const [epoch, setEpoch] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setTicks((t) => t + 1);
+      if (running) {
+        caAdvance();
+        setEpoch((x) => x + 1);
+      }
     }, 1000);
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  });
 
   function copyState() {
     return cells.map((row) => {
@@ -106,10 +111,22 @@ function Automaton(props) {
     setCells(new_cells);
   }
 
+  function caStart() {
+    setRunning(true);
+  }
+
+  function caStop() {
+    setRunning(false);
+  }
+
   return (
     <div>
-      <AutomatonController advance={() => caAdvance()} />
-      <StatusBar ticks={ticks} />
+      <AutomatonController
+        advance_action={() => running && caAdvance()}
+        start_action={() => caStart()}
+        stop_action={() => caStop()}
+      />
+      <StatusBar ticks={ticks} running={running} epoch={epoch} />
       <div class="d-flex justify-content-center">{drawTable()}</div>
     </div>
   );
