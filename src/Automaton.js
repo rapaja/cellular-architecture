@@ -30,7 +30,7 @@ function Automaton(props) {
       setTicks((t) => t + 1);
       if (running) {
         caAdvance();
-        setEpoch((x) => x + 1);
+        // setEpoch((x) => x + 1);
       }
     }, 1000);
     return () => {
@@ -80,24 +80,53 @@ function Automaton(props) {
   }
 
   function caGetNewCellState(cells, row, col) {
-    let alive = cells[row][col] === 1;
-    let sum =
-      cells[row - 1][col - 1] +
-      cells[row - 1][col] +
-      cells[row - 1][col + 1] +
-      cells[row][col - 1] +
-      cells[row][col + 1] +
-      cells[row + 1][col - 1] +
-      cells[row + 1][col] +
-      cells[row + 1][col + 1];
-    if (alive && sum < 2) {
-      return 0;
-    } else if (alive && sum > 3) {
-      return 0;
-    } else if (!alive && sum === 3) {
-      return 1;
+    let moje_stanje = cells[row][col];
+
+    let gore_levo = cells[row - 1][col - 1];
+    let gore = cells[row - 1][col];
+    let gore_desno = cells[row - 1][col + 1];
+
+    let levo = cells[row][col - 1];
+    let desno = cells[row][col + 1];
+
+    let dole_levo = cells[row + 1][col - 1];
+    let dole = cells[row + 1][col];
+    let dole_desno = cells[row + 1][col + 1];
+
+    let visina12 = 1;
+    let visina9 = 2;
+    let visina6 = 3;
+    let visina3 = 4;
+    let neizgradjeno = 0;
+
+    if (moje_stanje === visina12) {
+      return visina12;
+    } else if (
+      gore_levo === visina12 ||
+      gore === visina12 ||
+      gore_desno === visina12 ||
+      levo === visina12 ||
+      desno === visina12 ||
+      dole_levo === visina12 ||
+      dole === visina12 ||
+      dole_desno === visina12
+    ) {
+      return visina9;
+    } else if (moje_stanje === visina9) {
+      return visina9;
+    } else if (
+      gore_levo === visina9 ||
+      gore === visina9 ||
+      gore_desno === visina9 ||
+      levo === visina9 ||
+      desno === visina9 ||
+      dole_levo === visina9 ||
+      dole === visina9 ||
+      dole_desno === visina9
+    ) {
+      return visina6;
     } else {
-      return cells[row][col];
+      return moje_stanje;
     }
   }
 
@@ -109,6 +138,7 @@ function Automaton(props) {
       }
     }
     setCells(new_cells);
+    setEpoch((x) => x + 1);
   }
 
   function caStart() {
@@ -122,9 +152,12 @@ function Automaton(props) {
   return (
     <div>
       <AutomatonController
-        advance_action={() => running && caAdvance()}
+        advance_action={() => {
+          !running && caAdvance();
+        }}
         start_action={() => caStart()}
         stop_action={() => caStop()}
+        isRunning={running}
       />
       <StatusBar ticks={ticks} running={running} epoch={epoch} />
       <div class="d-flex justify-content-center">{drawTable()}</div>
